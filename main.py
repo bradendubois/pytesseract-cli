@@ -1,6 +1,6 @@
 from typing import Union
 
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 import pytesseract
 from pdf2image import convert_from_path
 
@@ -37,7 +37,14 @@ def process_file(file: Path):
 
     assert file.is_file()
 
-    result = parse_functions[parser.file_type](Image.open(file))
+    try:
+        image = Image.open(file)
+    except UnidentifiedImageError:
+        print(f"File: {file.absolute()} cannot be opened as a file : skipping")
+        return
+
+    # TODO - Include language
+    result = parse_functions[parser.file_type](image)
 
     if parser.join:
         parsing_buffer.append(result)
