@@ -28,6 +28,7 @@ parse_functions = {
 
 
 def write_parsed(contents: Union[bytes, str], destination):
+    print(destination)
     with destination.open(f"w{'+b' if isinstance(contents, bytes) else ''}") as f:
         f.write(contents)
 
@@ -62,10 +63,10 @@ def process_directory(directory: Path):
 def run():
 
     for file in parser.files:
-        process_file(file)
+        process_file(Path(file))
 
     for directory in parser.directories:
-        process_directory(directory)
+        process_directory(Path(directory))
 
     if parser.join:
         ...
@@ -77,15 +78,22 @@ if __name__ == "__main__":
 
     parser = ArgumentParser(prog="pytesseract-cli")
 
-    parser.add_argument('-f', dest="files", nargs='*', type=str, help="name(s) of file(s) to perform OCR check upon")
+    # files and directories to process
+    parser.add_argument('-f', dest="files", nargs='*', default=[], type=str, help="name(s) of file(s) to process")
+    parser.add_argument('-d', dest="directories", nargs='*', default=[], type=str, help="directory(s) to process")
 
-    # TODO - Separate into a recurse option and a directory option
-    parser.add_argument('-r', dest="directories", nargs='*', type=str, help="directory(s) to recurse upon")
-    parser.add_argument('-j', dest="join", required=False, type=str, help="directory(s) to recurse upon")
-    parser.add_argument('-t', dest="file_type", choices=parse_functions.keys(), default="pdf",
+    parser.add_argument('-r', dest="recurse", action="store_const", const=True, default=True,
+                        help="Recurse on all directories listed.")
+
+    parser.add_argument('-j', dest="join", required=False, type=str,
+                        help="join all parsed files into one with the given file name")
+
+    parser.add_argument('-t', dest="file_type", choices=parse_functions.keys(), default="txt",
                         help="desired output filetype")
 
     print(parser := parser.parse_args())
 
-
     run()
+
+    if parser.join:
+        ...
