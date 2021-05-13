@@ -10,19 +10,19 @@ from argparse import ArgumentParser
 
 # print(pytesseract.image_to_string(Image.open('test.png')))
 
-print("Convert pdf to images...", end="")
-images = convert_from_path("./test.pdf")
-print("done")
+# print("Convert pdf to images...", end="")
+# images = convert_from_path("./test.pdf")
+# print("done")
 
-for image in images:
-    print(pytesseract.image_to_string(image, lang="eng"))
-    print("*********")
+# for image in images:
+#     print(pytesseract.image_to_string(image, lang="eng"))
+#     print("*********")
 
 parser = ArgumentParser(prog="pytesseract-cli")
 
-# Help printout
-parser.add_argument('-f', nargs='*', type=str, help="name(s) of file(s) to perform OCR check upon")
-parser.add_argument('-r', nargs='*', type=str, help="directory(s) to recurse upon")
-parser.add_argument()
+parser.add_argument("-")
+parser.add_argument('-f', dest="files", nargs='*', type=str, help="name(s) of file(s) to perform OCR check upon")
+parser.add_argument('-r', dest="directories", nargs='*', type=str, help="directory(s) to recurse upon")
+parser.add_argument('-j', dest="join", action="store_const", const=True, default=False, help="directory(s) to recurse upon")
 
-parser.parse_args()
+print(parser.parse_args())
