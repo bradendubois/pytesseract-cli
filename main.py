@@ -1,29 +1,12 @@
+from argparse import ArgumentParser
+from pathlib import Path
+from PIL import Image, UnidentifiedImageError
+from pytesseract import image_to_string, image_to_pdf_or_hocr
 from typing import Union
 
-from PIL import Image, UnidentifiedImageError
-import pytesseract
-from pdf2image import convert_from_path
-
-from argparse import ArgumentParser
-
-from pathlib import Path
-# tess_loc = '/usr/bin/tesseract'
-
-# pytesseract.pytesseract.tesseract_cmd = tess_loc
-
-# print(pytesseract.image_to_string(Image.open('test.png')))
-
-# print("Convert pdf to images...", end="")
-# images = convert_from_path("./test.pdf")
-# print("done")
-
-# for image in images:
-#     print(pytesseract.image_to_string(image, lang="eng"))
-#     print("*********")
-
 parse_functions = {
-    "pdf": pytesseract.image_to_pdf_or_hocr,
-    "txt": pytesseract.image_to_string
+    "pdf": image_to_pdf_or_hocr,
+    "txt": image_to_string
 }
 
 
@@ -44,7 +27,7 @@ def process_file(file: Path):
         return
 
     # TODO - Include language
-    result = parse_functions[parser.file_type](image)
+    result = parse_functions[parser.file_type](image, lang="eng")
 
     if parser.join:
         parsing_buffer.append(result)
@@ -59,11 +42,11 @@ def process_directory(directory: Path):
 
     dir_list = sorted(directory.iterdir())
 
-    for file in filter(lambda entry: entry.isfile(), dir_list):
+    for file in filter(lambda entry: entry.is_file(), dir_list):
         process_file(file)
 
     if parser.recurse:
-        for nested_directory in filter(lambda entry: entry.isdir(), dir_list):
+        for nested_directory in filter(lambda entry: entry.is_dir(), dir_list):
             process_directory(nested_directory)
 
 
@@ -75,8 +58,8 @@ def run():
     for directory in parser.directories:
         process_directory(Path(directory))
 
-    if parser.join:
-        ...
+    # if parser.join:
+    #     ...
 
 
 if __name__ == "__main__":
@@ -90,17 +73,17 @@ if __name__ == "__main__":
     parser.add_argument('-d', dest="directories", nargs='*', default=[], type=str, help="directory(s) to process")
 
     parser.add_argument('-r', dest="recurse", action="store_const", const=True, default=True,
-                        help="Recurse on all directories listed.")
+                        help="recurse on all directories listed")
 
-    parser.add_argument('-j', dest="join", required=False, type=str,
-                        help="join all parsed files into one with the given file name")
+    # parser.add_argument('-j', dest="join", required=False, type=str,
+    #                     help="join all parsed files into one with the given file name")
 
     parser.add_argument('-t', dest="file_type", choices=parse_functions.keys(), default="txt",
                         help="desired output filetype")
 
-    print(parser := parser.parse_args())
+    parser = parser.parse_args()
 
     run()
 
-    if parser.join:
-        ...
+    # if parser.join:
+    #     ...
