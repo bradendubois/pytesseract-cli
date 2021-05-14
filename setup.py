@@ -8,7 +8,7 @@ README = (cwd / "README.md").read_text()
 dependencies = (cwd / "requirements.txt").read_text().strip().split("\n")
 
 # This should be set by the automated Github workflow
-VERSION = "1.1.1" # environ["SEMANTIC_VERSION"]
+VERSION = environ["SEMANTIC_VERSION"]
 
 setup(
     name="pytesseract-cli",
