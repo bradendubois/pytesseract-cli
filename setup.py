@@ -24,6 +24,6 @@ setup(
     include_package_data=True,
     install_requires=dependencies,
     entry_points={
-        'console_scripts': ["pytesseract-cli=src.main.py:main"],
+        'console_scripts': ["pytesseract-cli=pytesseract_cli.main.py:main"],
     }
 )
