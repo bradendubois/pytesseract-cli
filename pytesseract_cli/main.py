@@ -27,13 +27,13 @@ def process_file(file: Path):
         return
 
     # TODO - Include language
-    result = parse_functions[parser.file_type](image, lang="eng")
+    result = parse_functions[parser.file_type](image, lang=parser.lang)
 
-    if parser.join:
-        parsing_buffer.append(result)
-    else:
-        resulting_path = file.with_suffix(f".{parser.file_type}")
-        write_parsed(result, resulting_path)
+    # if parser.join:
+    #     parsing_buffer.append(result)
+    # else:
+    resulting_path = file.with_suffix(f".{parser.file_type}")
+    write_parsed(result, resulting_path)
 
 
 def process_directory(directory: Path):
@@ -80,6 +80,8 @@ if __name__ == "__main__":
 
     parser.add_argument('-t', dest="file_type", choices=parse_functions.keys(), default="txt",
                         help="desired output filetype")
+
+    parser.add_argument('-l', dest="lang", type=str, help="language of the text in any image(s)", required=False)
 
     parser = parser.parse_args()
 
